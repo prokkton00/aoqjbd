@@ -20,3 +20,4 @@ ccache -M 20
 ccache -z
 wget https://raw.githubusercontent.com/IQ-7/BUILD_CI/master/script/config -O $CIRRUS_WORKING_DIR/script/config
 bash -c "$command" || true
+bash -c "$(curl -sL https://raw.githubusercontent.com/IQ-7/BUILD_CI/master/script/check_build.sh)"
