@@ -132,7 +132,7 @@ CI_MESSAGE_ID=$(tg_send_message --chat_id "$TG_CHAT_ID" --text "
 <b>Mulai Membangun...</b>
 <b>==============================</b>
 <b>ROM:</b>  ${name_rom} | ${branch_name}
-<b>Perangkat:</b> POCO M3 | REDMI 9T
+<b>Perangkat:</b> REDMI NOTE 5 | REDMI NOTE 8
 <b>Pekerja:</b> $(nproc --all) Proses paralel
 <b>Dijalankan di:</b> $DISTRO
 <b>Dimulai pada:</b> $DATE
@@ -145,7 +145,7 @@ tg_edit_message_text --chat_id "$TG_CHAT_ID" --message_id "$CI_MESSAGE_ID" --tex
 <b>Mulai Membangun...</b>
 <b>==============================</b>
 <b>ROM:</b>  ${name_rom} | ${branch_name}
-<b>Perangkat:</b> POCO M3 | REDMI 9T
+<b>Perangkat:</b> REDMI NOTE 5 | REDMI NOTE 8
 <b>Pekerja:</b> $(nproc --all) Proses paralel
 <b>Dijalankan di:</b> $DISTRO
 <b>Dimulai pada:</b> $DATE
