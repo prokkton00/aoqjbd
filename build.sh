@@ -1,6 +1,6 @@
 #sync rom
-repo init --depth=1 --no-repo-verify -u https://github.com/Spark-Rom/manifest -b pyro -g default,-mips,-darwin,-notdefault
-git clone https://github.com/NFS-Project/local_manifest --depth 1 -b rosy-SparkOS-13 .repo/local_manifests
+repo init --depth=1 --no-repo-verify -u https://github.com/IQ-7/manifest.git -b xq -g default,-mips,-darwin,-notdefault
+git clone https://github.com/IQ-7/local_manifest --depth 1 -b xq-whyred .repo/local_manifests
 repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j8
 
 # build rom
@@ -9,16 +9,15 @@ timeStart
 
 source build/envsetup.sh
 export TZ=Asia/Jakarta
-export KBUILD_BUILD_USER=rosy
-export KBUILD_BUILD_HOST=nfsproject
-export BUILD_USERNAME=rosy
-export BUILD_HOSTNAME=nfsproject
-lunch spark_rosy-userdebug
+export BUILD_USERNAME=zacky
+export BUILD_HOSTNAME=android-build
+export ALLOW_MISSING_DEPENDENCIES=true
+lunch xtended_whyred-userdebug
 mkfifo reading
 tee "${BUILDLOG}" < reading &
 build_message "Building Started"
 progress &
-mka bacon -j8  > reading
+make xtended -j8  > reading
 
 retVal=$?
 timeEnd
