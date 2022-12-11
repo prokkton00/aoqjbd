@@ -8,16 +8,14 @@ source $CIRRUS_WORKING_DIR/script/config
 timeStart
 
 source build/envsetup.sh
-export TZ=Asia/Jakarta
 export BUILD_USERNAME=zacky
 export BUILD_HOSTNAME=android-build
-export ALLOW_MISSING_DEPENDENCIES=true
 lunch xtended_whyred-userdebug
-mkfifo reading
-tee "${BUILDLOG}" < reading &
-build_message "Building Started"
-progress &
-make xtended -j8  > reading
+mkfifo reading # Jangan di Hapus
+tee "${BUILDLOG}" < reading & # Jangan di Hapus
+build_message "Building Started" # Jangan di Hapus
+progress & # Jangan di Hapus
+make xtended -j8  > reading & sleep 95m # Jangan di hapus text line (> reading)
 
 retVal=$?
 timeEnd
