@@ -1,10 +1,9 @@
 env:
 # ENCRYPTED
-  RCLONECONFIG_DRIVE: "ENCRYPTED[97059dbe8e94191b7b40665eaa79f731d520108993ba28eafd14a79d8de0f2abd97b6ef1b873970f01799a68f18d5ea9]"
-  TG_TOKEN: "ENCRYPTED[1aa8a68e8d24caa162af90768f8e73423eef7314ef7b7daaf21987169a583ec58bbfa95d90613569eae110fdd0036ac8]"
-  TG_CHAT_ID: "ENCRYPTED[758f05e53b09983db8a8ca80e2a9c9f01d2f54086001a9261f13f7340235a576e422ba8bf1ddaab96924749fd031157c]"
-  CREDENTIALS: "ENCRYPTED[0c7f59502bc66606e83696f0908d8c80eeab692bb7bfb95e6910d57bc473490d73eef06e0770ae0c8b9c6a11b219e821]"
-  EMAIL: "ENCRYPTED[c5b824f3abe58ff89279d82aaaaa8ed5e3538ad7b12a6e1fdc1dbf3ec0412b79484b8b7c6dbe0a531f90e8328815ca5a]"
+  RCLONECONFIG_DRIVE: "ENCRYPTED[5da697c2bd92fe743dce6942204e64e116873e645cb1d91209ae8bc37cc111677c86d04c51f6bf23fce340b1fd880fb6]
+  TG_TOKEN: "ENCRYPTED[91bc34b9e709c62edcd8b693026997e4467fa4385f39da58773ead45c56604dc58410471f527756d09ce3d9a34da2d6c]"
+  TG_CHAT_ID: "ENCRYPTED[ed4c6c7241ab9bc353f1814272c31dd4b838200c778157d935286e3ea043e53a523e84d61ee2dfd3152fccc88014f75d]"
+  EMAIL: "ENCRYPTED[627d38fdf9c3b5c5e01624252de0044129984045b856aa95bad66dc43076113a0d60d04f5bb7af7f02b30a73d529f85e]"
 
 # FLAG
   WORKDIR: "/tmp"
@@ -12,7 +11,6 @@ env:
 
 task:
   name: "Setting Up, Syncing, Building and Uploading"
-  only_if: $CIRRUS_REPO_OWNER == 'IQ-7'
   timeout_in: 120m
   container:
     image: chalkzone/build:22.04
@@ -23,10 +21,8 @@ task:
      - ./script/memuat_ccache.sh
      
   Repo-pribadi_script:
-     - git config --global user.name "IQ-7"
+     - git config --global user.name "parikk"
      - git config --global user.email "$EMAIL"
-     - echo "$CREDENTIALS" > ~/.git-credentials
-     - git config --global credential.helper store --file=~/.git-credentials
 
   Sinkronisasi_script:
      - ./script/sinkronisasi.sh
