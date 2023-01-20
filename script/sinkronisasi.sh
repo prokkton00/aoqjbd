@@ -1,43 +1,69 @@
-env:
-# ENCRYPTED
-  RCLONECONFIG_DRIVE: "ENCRYPTED[f89eabaffabe0a4cb90994359c1cb083df61f18b7d00ff097897d66e997f836c34d7a80cb63d34c098bb0c99071409bb]"
-  TG_TOKEN: "ENCRYPTED[b2eea57b24307457b508a2b76e266a5268a67d463497876f152b00363b8f99f1de9540278c75c75e2b80625b44343a41]"
-  TG_CHAT_ID: "ENCRYPTED[62be02d46f4ef818097a1c592e9fec0572df72cd996b3cd37925779116d422d1d0cd913ffe7ad81ae742f672c3a60320]"
-  CREDENTIALS: "ENCRYPTED[44144db425362c943a1ba31df3791fc770639dd61b56fdebf3d442f3c6576fd675717c53c9d250238f882071b91a917c]"
-  EMAIL: "ENCRYPTED[184f5c0f3b3cbdb18319810fe79e73389416ade8cf00474ad82dce8b9d1223407efda16342e1218f88106fd211076bdb]"
+#!/usr/bin/env bash
 
-# FLAG
-  WORKDIR: "/tmp"
-  CIRRUS_CLONE_DEPTH: "1"
-
-task:
-  name: "Setting Up, Syncing, Building and Uploading"
-  timeout_in: 120m
-  container:
-    image: chalkzone/build:22.04
-    cpu: 8
-    memory: 32G
-
-  Memuat-ccache_background_script:
-     - ./script/memuat_ccache.sh
-     
-  Repo-pribadi_script:
-     - git config --global user.name "parikk"
-     - git config --global user.email "$EMAIL"
-     - echo "$CREDENTIALS" > ~/.git-credentials
-     - git config --global credential.helper store --file=~/.git-credentials
-
-  Sinkronisasi_script:
-     - ./script/sinkronisasi.sh
-     
-  Build-rom_script:
-     - ./script/membangun.sh
-     
-  Ccache-info_script:
-     - set -e
-     - export CCACHE_DIR=$WORKDIR/ccache
-     - ccache -s
-     
-  Upload-build_script:
-     - ./script/mengemas.sh
-     
+set -exv
+name_rom=$(grep init $CIRRUS_WORKING_DIR/build.sh -m 1 | cut -d / -f 4)
+mkdir -p $WORKDIR/rom/$name_rom
+cd $WORKDIR/rom/$name_rom
+command=$(head $CIRRUS_WORKING_DIR/build.sh -n $(expr $(grep '# build rom' $CIRRUS_WORKING_DIR/build.sh -n | cut -f1 -d:) - 1))
+only_sync=$(grep 'repo sync' $CIRRUS_WORKING_DIR/build.sh)
+bash -c "$command" || true
+curl -sO https://api.cirrus-ci.com/v1/task/$CIRRUS_TASK_ID/logs/Sync-rom.log
+a=$(grep 'Cannot remove project' Sync-rom.log -m1|| true)
+b=$(grep "^fatal: remove-project element specifies non-existent project" Sync-rom.log -m1 || true)
+c=$(grep 'repo sync has finished' Sync-rom.log -m1 || true)
+d=$(grep 'Failing repos:' Sync-rom.log -n -m1 || true)
+e=$(grep 'fatal: Unable' Sync-rom.log || true)
+f=$(grep 'error.GitError' Sync-rom.log || true)
+g=$(grep 'error: Cannot checkout' Sync-rom.log || true)
+if [[ $a == *'Cannot remove project'* ]]
+then
+a=$(echo $a | cut -d ':' -f2 | tr -d ' ')
+rm -rf $a
+fi
+if [[ $b == *'remove-project element specifies non-existent'* ]]
+then exit 1
+fi
+if [[ $d == *'Failing repos:'* ]]
+then
+d=$(expr $(grep 'Failing repos:' Sync-rom.log -n -m 1| cut -d ':' -f1) + 1)
+d2=$(expr $(grep 'Try re-running' Sync-rom.log -n -m1 | cut -d ':' -f1) - 1 )
+fail_paths=$(head -n $d2 Sync-rom.log | tail -n +$d)
+for path in $fail_paths
+do
+rm -rf $path
+aa=$(echo $path|awk -F '/' '{print $NF}')
+rm -rf .repo/project-objects/*$aa.git
+rm -rf .repo/projects/$path.git
+done
+fi
+if [[ $e == *'fatal: Unable'* ]]
+then
+fail_paths=$(grep 'fatal: Unable' Sync-rom.log | cut -d ':' -f2 | cut -d "'" -f2)
+for path in $fail_paths
+do
+rm -rf $path
+aa=$(echo $path|awk -F '/' '{print $NF}')
+rm -rf .repo/project-objects/*$aa.git
+rm -rf .repo/project-objects/$path.git
+rm -rf .repo/projects/$path.git
+done
+fi
+if [[ $f == *'error.GitError'* ]]
+then
+rm -rf $(grep 'error.GitError' Sync-rom.log | cut -d ' ' -f2)
+fi
+if [[ $g == *'error: Cannot checkout'* ]]
+then
+coerr=$(grep 'error: Cannot checkout' Sync-rom.log | cut -d ' ' -f 4| tr -d ':')
+for i in $coerr
+do
+rm -rf .repo/project-objects/$i.git
+done
+fi
+#- (repo forall -c 'git checkout .' && bash -c "$only_sync") || (find -name shallow.lock -delete && find -name index.lock -delete && bash -c "$only_sync")
+if [[ $c == *'repo sync has finished'* ]]
+then true
+else
+repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
+fi
+rm -rf Sync-rom.log
