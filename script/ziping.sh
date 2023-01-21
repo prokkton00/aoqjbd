@@ -40,6 +40,7 @@ cd $WORKDIR/rom/$name_rom/out/target/product/$device
 echo -e \
 "
 <b>✅ Build Completed Successfully ✅</b>
+
 ━━━━━━━━━ஜ۩۞۩ஜ━━━━━━━━
 <b>🚀 Rom Name :- ${name_rom}</b>
 <b>📁 File Name :-</b> <code>"${file_name}"</code>
@@ -50,9 +51,12 @@ echo -e \
 <b>📥 Download Link :-</b> <a href=\"${DL_LINK}\">Here</a>
 <b>📅 Date :- "$(date +%d\ %B\ %Y)"</b>
 <b>🕔 Time Zone :- "$(date +%T)"</b>
+
+
 <b>📕 MD5 :-</b> <code>"$(md5sum *zip | cut -d' ' -f1)"</code>
 <b>📘 SHA1 :-</b> <code>"$(sha1sum *zip | cut -d' ' -f1)"</code>
 ━━━━━━━━━ஜ۩۞۩ஜ━━━━━━━━
+
 <b>👮 By : "$(cd $CIRRUS_WORKING_DIR && git log --pretty=format:'%an' -1)"</b>
 " > tg.html
 TG_TEXT=$(< tg.html)
@@ -74,7 +78,7 @@ com ()
   tar --use-compress-program="pigz -k -$2 " -cf $1.tar.gz $1
 }
 time com ccache 1
-rclone copy ccache.tar.gz parikk:ccache/$name_rom/$device -P
+rclone copy --drive-chunk-size 256M --stats 1s ccache.tar.gz parikk:ccache/$name_rom/$device -P
 rm -rf ccache.tar.gz
 echo ━━━━━━━━━ஜ۩۞۩ஜ━━━━━━━━
 msg Upload ccache succes..
