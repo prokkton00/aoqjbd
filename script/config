@@ -331,9 +331,6 @@ CI_MESSAGE_ID=$(tg_send_message --chat_id "$TG_CHAT_ID" --text "<b>=== Starting 
 <b>🖥 Branch:</b> ${branch_name}
 <b>📱 Device:</b> $DEPIS
 <b>📟 Job:</b> $CIRRUS_CPU Paralel processing
-<b>🗃 Penyimpanan:</b> 5TB
-<b>📈 Digunakan:</b> 54.32GB
-<b>📉 Tersisa:</b> 46.38GB
 <b>⏳ Running on:</b> $DISTRO
 <b>📅 Started at:</b> $DATE
 
