@@ -1,5 +1,5 @@
 # sync rom
-repo init --depth=1 --no-repo-verify -u https://github.com/Evolution-X/manifest.git -b tiramisu -g default,-mips,-darwin,-notdefault
+repo init --depth=1 --no-repo-verify -u https://github.com/PixelOS-AOSP/manifest.git -b thirteen -g default,-mips,-darwin,-notdefault
 repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j16
 git clone --depth=1 https://github.com/parikk/device_xiaomi_lmi.git -b 13-evox device/xiaomi/lmi
 git clone --depth=1 https://github.com/parikk/vendor_xiaomi_lmi.git -b 13-evox vendor/xiaomi/lmi
@@ -13,13 +13,12 @@ timeStart
 . build/envsetup.sh
 export BUILD_USERNAME=parikk
 export BUILD_HOSTNAME=parikk-build
-export EVO_BUILD_TYPE=OFFICIAL
-lunch evolution_lmi-user
+lunch aosp_lmi-user
 mkfifo reading # Jangan di Hapus
 tee "${BUILDLOG}" < reading & # Jangan di Hapus
 build_message "Building Started" # Jangan di Hapus
 progress & # Jangan di Hapus
-mka evolution -j16  > reading & sleep 95m # Jangan di hapus text line (> reading)
+make bacon -j16  > reading & sleep 95m # Jangan di hapus text line (> reading)
 
 retVal=$?
 timeEnd
