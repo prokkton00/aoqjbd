@@ -1,10 +1,7 @@
 # sync rom
 repo init --depth=1 --no-repo-verify -u https://github.com/Evolution-X/manifest.git -b tiramisu -g default,-mips,-darwin,-notdefault
 repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j16
-git clone --depth=1 https://github.com/parikk/device_xiaomi_lmi.git -b 13-evox device/xiaomi/lmi
-git clone --depth=1 https://github.com/parikk/vendor_xiaomi_lmi.git -b 13-evox vendor/xiaomi/lmi
-git clone --depth=1 https://github.com/ProjectElixir-Devices/kernel_xiaomi_lmi.git -b zen_plus-13 kernel/xiaomi/lmi
-git clone --depth=1 https://gitlab.com/Roxor-007/WeebX_clang16.git -b main prebuilts/clang/host/linux-x86/clang-weebx
+git clone --depth=1 https://github.com/parikk/android_device_samsung_m20lte.git -b 13-evox device/samsung/m20lte
 
 # build rom
 source $CIRRUS_WORKING_DIR/script/config
@@ -14,7 +11,7 @@ timeStart
 export BUILD_USERNAME=parikk
 export BUILD_HOSTNAME=parikk-build
 export EVO_BUILD_TYPE=OFFICIAL
-lunch evolution_lmi-user
+lunch evolution_m20lte-userdebug
 mkfifo reading # Jangan di Hapus
 tee "${BUILDLOG}" < reading & # Jangan di Hapus
 build_message "Building Started" # Jangan di Hapus
